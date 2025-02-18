@@ -13,6 +13,13 @@ const userSchema = new mongoose.Schema({
   avatarURL: {
     type: String,
   },
+  description: {
+    type: String,
+  },
+  pseudo: {
+    type: String,
+    required: true,
+  },
 });
 
 
