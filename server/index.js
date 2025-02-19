@@ -37,12 +37,28 @@ app.post('/register', async (req, res) => {
     }
 });
 
+const connectDB = async () => {
+    try {
+        console.log('MongoDB URI:', process.env.MONGO_URI);
+        await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            writeConcern: {
+                w: 'majority',
+                j: true,
+                wtimeout: 1000,
+            },
+        });
+        console.log('MongoDB connected');
+    } catch (error) {
+        console.error('MongoDB connection error:', error);
+        process.exit(1);
+    }
+};
+
+connectDB();
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
-    mongoose.connect(MONGO_URI).then(() => {
-        console.log("BDD connecté");
-    }).catch(() => {
-        console.log("Pas connecté");
-    })
 })

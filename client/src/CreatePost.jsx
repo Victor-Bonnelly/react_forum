@@ -24,6 +24,8 @@ const CreatePost = () => {
             });
 
             if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error details:', errorData);
                 throw new Error('Network response was not ok');
             }
 

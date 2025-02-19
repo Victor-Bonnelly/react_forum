@@ -28,6 +28,11 @@ router.get('/api/posts', async (req, res) => {
 
 router.post('/api/posts', async (req, res) => {
     const { title, content } = req.body;
+
+    if (!title || !content) {
+        return res.status(400).json({ error: 'Title and content are required.' });
+    }
+
     try {
         const newPost = new Post({ title, content });
         await newPost.save();
