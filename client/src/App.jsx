@@ -45,6 +45,20 @@ const Home = () => {
         }
     };
 
+    const handleDeletePost = async (postId) => {
+        try {
+            const response = await fetch(`http://localhost:3001/api/posts/${postId}`, {
+                method: 'DELETE',
+            });
+            if (!response.ok) {
+                throw new Error('Erreur lors de la suppression du post');
+            }
+            setPosts(posts.filter(post => post._id !== postId));
+        } catch (error) {
+            console.error("Erreur lors de la suppression du post :", error);
+        }
+    };
+
     useEffect(() => {
         getAllPosts();
     }, []);
@@ -63,6 +77,9 @@ const Home = () => {
                                 <p>Publié par: {post.author}</p>
                                 <p>Publié le: {post.createdAt}</p>
                                 <a href={`/post/${post._id}`} className="btn btn-primary">Voir le post</a>
+                                {isAuthenticated && user.pseudo === post.author && (
+                                    <button onClick={() => handleDeletePost(post._id)} className="btn btn-danger">Supprimer</button>
+                                )}
                             </div>
                         </div>
                     </div>

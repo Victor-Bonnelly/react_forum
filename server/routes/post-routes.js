@@ -18,7 +18,7 @@ router.get('/posts', async (req, res) => {
 
 router.get('/api/posts', async (req, res) => {
     try {
-        const posts = await recupererTousPosts();
+        const posts = await Post.find({ deleted: false });
         res.json(posts);
     } catch (error) {
         console.error('Erreur lors de la récupération des posts:', error);
@@ -34,7 +34,7 @@ router.post('/api/posts', async (req, res) => {
     }
 
     try {
-        const newPost = new Post({ title, content, author });
+        const newPost = new Post({ title, content, author, deleted: false });
         await newPost.save();
         res.status(201).json({ message: 'Post created successfully' });
     } catch (error) {
@@ -51,6 +51,20 @@ router.get('/api/posts/:id', async (req, res) => {
         res.json(post);
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+});
+
+
+router.delete('/api/posts/:id', async (req, res) => {
+    try {
+        const postId = req.params.id;
+        const post = await Post.findByIdAndUpdate(postId, { deleted: true }, { new: true });
+        if (!post) {
+            return res.status(404).send('Post non trouvé');
+        }
+        res.status(200).send('Post supprimé avec succès');
+    } catch (error) {
+        res.status(500).send('Erreur lors de la suppression du post');
     }
 });
 
