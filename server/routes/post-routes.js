@@ -2,7 +2,7 @@ import express from 'express';
 import { createPost, getAllPosts } from '../controllers/post-controller.js';
 import { recupererTousPosts } from '../db/repository/post-repository.js';
 import Post from '../db/models/Post.js';
-
+import Comment from '../db/models/Comment.js';
 const router = express.Router();
 
 router.post('/post', createPost);
@@ -54,7 +54,6 @@ router.get('/api/posts/:id', async (req, res) => {
     }
 });
 
-
 router.delete('/api/posts/:id', async (req, res) => {
     try {
         const postId = req.params.id;
@@ -65,6 +64,44 @@ router.delete('/api/posts/:id', async (req, res) => {
         res.status(200).send('Post supprimé avec succès');
     } catch (error) {
         res.status(500).send('Erreur lors de la suppression du post');
+    }
+});
+
+router.post('/api/posts/:id/comments', async (req, res) => {
+    try {
+        const { content, author, rating } = req.body;
+
+        if (!content || !author) {
+            return res.status(400).json({ error: 'Content and author are required.' });
+        }
+
+        const comment = new Comment({
+            content,
+            author,
+            postId: req.params.id,
+            rating
+        });
+        await comment.save();
+        res.status(201).json(comment);
+    } catch (error) {
+        console.error('Error while saving comment:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+router.get('/api/posts/:id/comments', async (req, res) => {
+    try {
+        const comments = await Comment.find({ postId: req.params.id });
+        
+        if (comments.length === 0) {
+            console.log('Aucun commentaire trouvé pour ce post.');
+            return res.status(200).json({ message: 'Aucun commentaire trouvé pour ce post.' });
+        }
+        
+        res.json(comments);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des commentaires:', error);
+        res.status(500).json({ message: 'Erreur lors de la récupération des commentaires' });
     }
 });
 
