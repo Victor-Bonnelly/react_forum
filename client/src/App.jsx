@@ -51,14 +51,18 @@ const Home = () => {
         <div>
             <h2>Bienvenue sur la page d&apos;accueil {isAuthenticated && user.pseudo}</h2>
             <CreatePost />
-            <div>
+            <div className="row">
                 {posts.map(post => (
-                    <div key={post._id}>
-                        <h3>{post.title}</h3>
-                        <p>{post.content}</p>
-                        {post.image && <img src={post.image} alt={post.title} />}
-                        <p>Publié par: {post.author}</p>
-                        <p>Publié le: {post.createdAt}</p>
+                    <div className="col-md-4" key={post._id}>
+                        <div className="card" style={{ width: '18rem' }}>
+                            {post.image && <img className="card-img-top" src={post.image} alt={post.title} />}
+                            <div className="card-body">
+                                <h5 className="card-title">{post.title}</h5>
+                                <p>Publié par: {post.author}</p>
+                                <p>Publié le: {post.createdAt}</p>
+                                <a href="#" className="btn btn-primary">Voir le post</a>
+                            </div>
+                        </div>
                     </div>
                 ))}
             </div>
