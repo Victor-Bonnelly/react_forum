@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { usePosts } from '../../context/PostContext';
 
 const CreatePost = () => {
@@ -6,14 +6,29 @@ const CreatePost = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [image, setImage] = useState(null);
+    const [pseudo, setPseudo] = useState('');
+
+    useEffect(() => {
+        const userData = localStorage.getItem('user');
+        if (userData) {
+            const parsedUser = JSON.parse(userData);
+            const storedPseudo = parsedUser.pseudo;
+            console.log("storedPseudo", storedPseudo);
+            if (storedPseudo) {
+                setPseudo(storedPseudo);
+            }
+        }
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         const postData = {
             title: title,
             content: content,
+            author: pseudo,
+            createdAt: new Date().toISOString(),
         };
-
+        console.log("postData", postData);
         try {
             const response = await fetch('http://localhost:3001/api/posts', {
                 method: 'POST',

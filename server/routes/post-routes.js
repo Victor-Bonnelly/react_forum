@@ -27,14 +27,14 @@ router.get('/api/posts', async (req, res) => {
 });
 
 router.post('/api/posts', async (req, res) => {
-    const { title, content } = req.body;
+    const { title, content, author } = req.body;
 
-    if (!title || !content) {
-        return res.status(400).json({ error: 'Title and content are required.' });
+    if (!title || !content || !author) {
+        return res.status(400).json({ error: 'Title, content and author are required.' });
     }
 
     try {
-        const newPost = new Post({ title, content });
+        const newPost = new Post({ title, content, author });
         await newPost.save();
         res.status(201).json({ message: 'Post created successfully' });
     } catch (error) {

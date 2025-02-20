@@ -58,6 +58,7 @@ const Home = () => {
                         <p>{post.content}</p>
                         {post.image && <img src={post.image} alt={post.title} />}
                         <p>Publié par: {post.author}</p>
+                        <p>Publié le: {post.createdAt}</p>
                     </div>
                 ))}
             </div>
