@@ -42,4 +42,16 @@ router.post('/api/posts', async (req, res) => {
     }
 });
 
+router.get('/api/posts/:id', async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post non trouvé' });
+        }
+        res.json(post);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 export default router; 

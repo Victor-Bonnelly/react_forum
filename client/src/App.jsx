@@ -8,6 +8,7 @@ import { UserProvider } from '../../context/UserContext';
 import { PostProvider, usePosts } from '../../context/PostContext';
 import { useEffect, useState } from 'react';
 import CreatePost from './CreatePost';
+import PostDetail from './PostDetail';
 
 const App = () => {
     return (
@@ -19,6 +20,7 @@ const App = () => {
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/post/:id" element={<PostDetail />} />
                 </Routes>
             </PostProvider>
         </UserProvider>
@@ -60,7 +62,7 @@ const Home = () => {
                                 <h5 className="card-title">{post.title}</h5>
                                 <p>Publié par: {post.author}</p>
                                 <p>Publié le: {post.createdAt}</p>
-                                <a href="#" className="btn btn-primary">Voir le post</a>
+                                <a href={`/post/${post._id}`} className="btn btn-primary">Voir le post</a>
                             </div>
                         </div>
                     </div>
