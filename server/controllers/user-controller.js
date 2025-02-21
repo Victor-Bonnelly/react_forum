@@ -112,46 +112,43 @@ export const addFavorite = async (req, res) => {
     const favoriteId = req.params.favoriteId;
 
     try {
-   
         const user = await User.findById(userId);
         if (!user) {
             return res.status(404).json({ message: 'Utilisateur non trouvé.' });
         }
 
-
         if (!user.favorites) {
             user.favorites = []; 
         }
 
-       
-        if (!user.favorites.includes(favoriteId)) {
-           
-           
-            const updatedUser = await User.findOneAndUpdate(
+        if (user.favorites.includes(favoriteId)) {
+            await User.findOneAndUpdate(
+                { _id: userId },
+                { $pull: { favorites: favoriteId } },
+                { new: true } 
+            );
+            return res.status(200).json({ message: 'Favori retiré avec succès.' });
+        } else {
+            await User.findOneAndUpdate(
                 { _id: userId },
                 { $addToSet: { favorites: favoriteId } },
                 { new: true } 
             );
-
-             res.status(200).json({ message: 'Favori ajouté avec succès.' });
-        } else {
-            res.status(400).json({ message: 'Ce favori est déjà ajouté.' });
+            return res.status(200).json({ message: 'Favori ajouté avec succès.' });
         }
     } catch (error) {
-        console.error("Erreur lors de l'ajout du favori:", error);
-        res.status(500).json({ message: 'Erreur lors de l\'ajout du favori.', error });
+        console.error("Erreur lors de l'ajout ou du retrait du favori:", error);
+        res.status(500).json({ message: 'Erreur lors de l\'ajout ou du retrait du favori.', error });
     }
 };
 
 export const fetchFavorites = async (req, res) => {
-    console.log("fetchFavorites appelé");
     const userId = req.params.id;
     try {
         const user = await User.findById(userId).populate('favorites');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        console.log("Détails des favoris peuplés:", user.favorites);
         res.json(user.favorites);
     } catch (error) {
         console.error(error);
