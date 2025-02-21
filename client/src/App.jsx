@@ -6,9 +6,12 @@ import Profile from './Profile';
 import Header from './components/Header';
 import { UserProvider } from '../../context/UserContext';
 import { PostProvider, usePosts } from '../../context/PostContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import CreatePost from './CreatePost';
 import PostDetail from './PostDetail';
+import Favorites from './Favorites';
+
+
 
 const App = () => {
     return (
@@ -20,6 +23,7 @@ const App = () => {
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/favorites" element={<Favorites />} />
                     <Route path="/post/:id" element={<PostDetail />} />
                 </Routes>
             </PostProvider>
@@ -31,7 +35,8 @@ const Home = () => {
     const { posts, setPosts } = usePosts();
     const isAuthenticated = localStorage.getItem('token') !== null;
     const user = JSON.parse(localStorage.getItem('user'));
-
+    const userId = user._id;
+    const token = localStorage.getItem('token');
     const getAllPosts = async () => {
         try {
             const response = await fetch('http://localhost:3001/api/posts');
@@ -58,7 +63,27 @@ const Home = () => {
             console.error("Erreur lors de la suppression du post :", error);
         }
     };
-
+    const toggleFavorite = async (postId) => {
+        try {
+            console.log("userId", userId);
+            console.log("postId", postId);
+            const response = await fetch(`http://localhost:3001/users/${userId}/favorites/${postId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            
+            if (!response.ok) {
+                throw new Error(`Erreur lors de la modification du favoris : ${response.statusText}`);
+            }
+            const data = await response.json();
+            setPosts(data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
     useEffect(() => {
         getAllPosts();
     }, []);
@@ -80,6 +105,9 @@ const Home = () => {
                                 {isAuthenticated && user.pseudo === post.author && (
                                     <button onClick={() => handleDeletePost(post._id)} className="btn btn-danger">Supprimer</button>
                                 )}
+                                <button onClick={() => toggleFavorite(post._id)}>
+                                    {post.isFavorite ? '❤️' : '🤍'}
+                                </button>
                             </div>
                         </div>
                     </div>

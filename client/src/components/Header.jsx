@@ -41,6 +41,14 @@ const Header = () => {
                                 <img src={user.avatar} alt="Avatar" className="user-avatar" />
                             )}
                         </li>
+                        
+                    )}
+                     {isAuthenticated && ( 
+                        <li>
+                            <Link to="/favorites">Favoris</Link>
+                           
+                        </li>
+                        
                     )}
                 </ul>
             </nav>

@@ -107,11 +107,51 @@ export const logoutUser = (req, res) => {
     res.status(200).json({ message: 'Déconnexion réussie' });
 };
 
+export const addFavorite = async (req, res) => {
+    const userId = req.params.id;
+    const favoriteId = req.params.favoriteId;
+
+    try {
+   
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Utilisateur non trouvé.' });
+        }
+
+        console.log("Utilisateur trouvé:", user); 
+
+        if (!user.favorites) {
+            user.favorites = []; 
+        }
+
+        console.log("Favoris actuels:", user.favorites); 
+
+        if (!user.favorites.includes(favoriteId)) {
+            console.log("Ajout du favori à la base de données...");
+            
+           
+            const updatedUser = await User.findOneAndUpdate(
+                { _id: userId },
+                { $addToSet: { favorites: favoriteId } },
+                { new: true } 
+            );
+
+             res.status(200).json({ message: 'Favori ajouté avec succès.' });
+        } else {
+            res.status(400).json({ message: 'Ce favori est déjà ajouté.' });
+        }
+    } catch (error) {
+        console.error("Erreur lors de l'ajout du favori:", error);
+        res.status(500).json({ message: 'Erreur lors de l\'ajout du favori.', error });
+    }
+};
+
 const userController = {
   register,
   registerUser,
   loginUser,
   logoutUser,
+  addFavorite,
 };
 
 export default userController; 
