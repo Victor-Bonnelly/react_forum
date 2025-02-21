@@ -46,9 +46,7 @@ const Header = () => {
                      {isAuthenticated && ( 
                         <li>
                             <Link to="/favorites">Favoris</Link>
-                           
                         </li>
-                        
                     )}
                 </ul>
             </nav>

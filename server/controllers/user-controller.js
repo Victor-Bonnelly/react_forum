@@ -118,17 +118,14 @@ export const addFavorite = async (req, res) => {
             return res.status(404).json({ message: 'Utilisateur non trouvé.' });
         }
 
-        console.log("Utilisateur trouvé:", user); 
 
         if (!user.favorites) {
             user.favorites = []; 
         }
 
-        console.log("Favoris actuels:", user.favorites); 
-
+       
         if (!user.favorites.includes(favoriteId)) {
-            console.log("Ajout du favori à la base de données...");
-            
+           
            
             const updatedUser = await User.findOneAndUpdate(
                 { _id: userId },
@@ -146,12 +143,29 @@ export const addFavorite = async (req, res) => {
     }
 };
 
+export const fetchFavorites = async (req, res) => {
+    console.log("fetchFavorites appelé");
+    const userId = req.params.id;
+    try {
+        const user = await User.findById(userId).populate('favorites');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        console.log("Détails des favoris peuplés:", user.favorites);
+        res.json(user.favorites);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
 const userController = {
   register,
   registerUser,
   loginUser,
   logoutUser,
   addFavorite,
+  fetchFavorites,
 };
 
 export default userController; 

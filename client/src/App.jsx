@@ -1,4 +1,4 @@
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Signup from './Signup';
 import Login from './Login';
@@ -6,7 +6,7 @@ import Profile from './Profile';
 import Header from './components/Header';
 import { UserProvider } from '../../context/UserContext';
 import { PostProvider, usePosts } from '../../context/PostContext';
-import { useEffect, useState, useContext } from 'react';
+import { useEffect } from 'react';
 import CreatePost from './CreatePost';
 import PostDetail from './PostDetail';
 import Favorites from './Favorites';
@@ -14,6 +14,12 @@ import Favorites from './Favorites';
 
 
 const App = () => {
+    const userData = localStorage.getItem('user');
+    let storedId;
+    if (userData) {
+        const parsedUser = JSON.parse(userData);
+        storedId = parsedUser._id;
+    }
     return (
         <UserProvider>
             <PostProvider>
@@ -23,7 +29,7 @@ const App = () => {
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/favorites" element={<Favorites />} />
+                    <Route path="/favorites" element={<Favorites userId={storedId} />} />
                     <Route path="/post/:id" element={<PostDetail />} />
                 </Routes>
             </PostProvider>
