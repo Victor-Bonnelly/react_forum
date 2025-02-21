@@ -83,9 +83,8 @@ const Home = () => {
             
             if (!response.ok) {
                 throw new Error(`Erreur lors de la modification du favoris : ${response.statusText}`);
-            }
-            const data = await response.json();
-            setPosts(data);
+            }        
+            await getAllPosts(); 
         } catch (error) {
             console.error(error);
         }
